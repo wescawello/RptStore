@@ -1,0 +1,192 @@
+<div class="animated fadeIn">
+
+  <div class="row">
+
+
+
+    <div class="col-md-12">
+      <div class="card">
+
+        <div class="card-body">
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">客戶：</label>
+            <div class="col-md-9">
+              <select class="form-control" name="loadline-bmain" [(ngModel)]="qmodel.Customer.CustomerInfoId" [ngModelOptions]="{standalone: true}">
+                <option [ngValue]="0">請選擇</option>
+                <option *ngFor="let v of (sconf.xcustomers$|async)" [ngValue]="v.Id">{{v.Name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">聯絡人：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="qmodel.Customer.Connecter" placeholder="請輸入聯絡人" [ngModelOptions]="{standalone: true}" />
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">出貨單號：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="qmodel.ApplyNumber" type="text" placeholder="請輸入出貨單號" [ngModelOptions]="{standalone: true}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">條碼：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="qmodel.Barcode" type="text" placeholder="請輸入條碼" [ngModelOptions]="{standalone: true}">
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">退貨日期：</label>
+            <div class="col-md-9">
+              <div class="input-group">
+                <input class="form-control"
+                       bsDaterangepicker
+                       [(bsValue)]="qmodel.ReturnDateRange" placeholder="退貨日期區間"
+                       [bsConfig]="{ rangeInputFormat: 'YYYY-MM-DD' }">
+              </div>
+              <span class="help-block">Please enter a valid date</span>
+            </div>
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+  <div class="card">
+    <div class="card-header" style="text-align:right">
+      <button type="button" class="btn btn-sm btn-primary" (click)="cud.preQuery(qmodel)"><i class="fa fa-dot-circle-o"></i> Query</button>
+      <button type="reset" class="btn btn-sm btn-danger" (click)="Clear();  "><i class="fa fa-ban"></i> Reset</button>
+    </div>
+    <div class="card-body" *ngIf="cud.pagerObj.Results$|async">
+      <div class="content-wrapper">
+        <table class="table">
+          <thead>
+            <!--class="thead-dark"-->
+            <tr>
+              <th scope="col">
+                <app-sortprop propname="ApplyNumber" displayname="單號" [prs]="cud"></app-sortprop>
+              </th>
+              <th scope="col">
+                <app-sortprop propname="CustomerConnecter" displayname="聯絡人" [prs]="cud"></app-sortprop>
+              </th>
+              <th> <app-sortprop propname="CustomerName" displayname="客戶名" [prs]="cud"></app-sortprop>  </th>
+              <th> <app-sortprop propname="ItemCount" displayname="數量" [prs]="cud"></app-sortprop>  </th>
+              <th> <app-sortprop propname="OrgPrice" displayname="總購金額" [prs]="cud"></app-sortprop>  </th>
+              <th> <app-sortprop propname="ReturnPrice" displayname="總退貨金額" [prs]="cud"></app-sortprop>  </th>
+              <th> <app-sortprop propname="SalePrice" displayname="總原售金額" [prs]="cud"></app-sortprop>  </th>
+              <th> <app-sortprop propname="ReturnDate" displayname="退貨日" [prs]="cud"></app-sortprop>  </th>
+              <th>
+                操作
+              </th>
+            </tr>
+          </thead>
+          <!--<thead>
+          <tr>
+
+            <th mat-sort-header="3">廠商名稱 </th>
+            <th mat-sort-header="5">設備名稱</th>
+            <th mat-sort-header="7">零件名稱</th>
+            <th mat-sort-header="8">起始時間</th>
+            <th mat-sort-header="9">成本</th>
+            <th scope="col">
+              Action
+            </th>
+          </tr>
+        </thead>-->
+          <tbody>
+            <tr *ngFor="let e of cud.pagerObj.Results$|async">
+              <th>{{e.ApplyNumber}}</th>
+              <td>{{e.CustomerConnecter}}</td>
+              <th>{{e.CustomerName}}</th>
+              <th>{{e.ItemCount}}</th>
+              
+              <th>{{e.OrgPrice}}</th>
+              <th>{{e.ReturnPrice}}</th>
+              <th>{{e.SalePrice}}</th>
+
+              <th>{{e.ReturnDate|date:'yyyy/MM/dd'}}</th>
+
+
+              <td style="text-align:right;">
+
+
+
+                <button type="button" class="btn btn-sm btn-info" (click)="action(2,e)">
+                  <i class="fa" [ngClass]="{ 'fa-eye' :true}"></i>
+                  view
+                </button>
+                <!--<button type="button" class="btn btn-sm btn-info" (click)="action(2,qmodel)"><i class="fa fa-edit"></i> sort</button>-->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row" *ngIf="cud.pagerObj?.RowCount>0">
+        <div class="col-md-6">
+          <pagination [totalItems]="cud.pagerObj.RowCount" [itemsPerPage]="cud.pagerObj.PageSize" [(ngModel)]="cud.pagerObj.CurrentPage"
+                      (pageChanged)="tl.chpage($event.page)"
+                      [maxSize]="tl.pagermaxSize"
+                      [rotate]="false"></pagination>
+        </div>
+        <div class="col-md-3" style="text-align:center">
+          <span>total : {{cud.pagerObj.RowCount}} | </span>
+          <span>{{cud.pagerObj.CurrentPage}}/{{cud.pagerObj.PageCount}} pages</span>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-6" style="text-align:right">每頁</div>
+            <div class="col-md-4">
+              <select (change)="tl.chpagesize(cud.pagerObj.PageSize)" [(ngModel)]="cud.pagerObj.PageSize" class="form-control form-control-sm">
+                <option [ngValue]="2">2</option>
+                <option [ngValue]="3">3</option>
+                <option [ngValue]="4">4</option>
+                <option [ngValue]="5">5</option>
+                <option [ngValue]="10">10</option>
+              </select>
+            </div>
+            <div class="col-md-2" style="text-align:left">筆</div>
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <br />
+  <div class="modal fade" bsModal #modal="bs-modal"
+       tabindex="-1" role="dialog" aria-labelledby="dialog-events-name"
+       (onHidden)="handler('onHidden', $event)">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 id="dialog-events-name" class="modal-title pull-left">SotckOrder ApplyNumber:{{delApplyNumber}}</h4>
+          <button type="button" class="close pull-right" aria-label="Close" (click)="modal.hide()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">  
+          確認刪除 <br>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-warning" (click)="modal.hide()">取消</button>
+          <button class="btn btn-danger"  (click)="del(delId) ;modal.hide();"  > 確定</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,168 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">入倉單號：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.ApplyNumber" type="text" placeholder="請輸入倉單號" [ngModelOptions]="{standalone: true}" required>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">目的倉：</label>
+            <div class="col-md-9">
+              <select class="form-control" id="txt-stn-vname" name="loadline-bmain" [(ngModel)]="refobj.StockUnitId" (ngModelChange)="dvchange($event)"
+
+                      [ngModelOptions]="{standalone: true}">
+                <option [ngValue]="0">請選擇</option>
+                <option *ngFor="let v of (sconf.xstockunitsAdmin$|async)" [ngValue]="v.Id">{{v.Name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">保管人：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Keeper" type="text" placeholder="請輸入保管人" [ngModelOptions]="{standalone: true}" required>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card" *ngIf="refobj.Keeper && refobj.ApplyNumber">
+
+        <div class="card-body">
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">運單號：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.TrackId" type="text" placeholder="請輸入運單號" [ngModelOptions]="{standalone: true}" required>
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">來源倉：</label>
+            <div class="col-md-9">
+              <!--OrgStockUnitId-->
+              <select class="form-control" id="txt-stn-vname" name="loadline-bmain" [(ngModel)]="refobj.OrgStockUnitId" (ngModelChange)="subdvchange($event)" [ngModelOptions]="{standalone: true}">
+                <option [ngValue]="0">請選擇</option>
+                <option *ngFor="let v of (locstockunits$|async)" [ngValue]="v.Id">{{v.Name}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer" style="text-align:right">
+          <input [(ngModel)]="env.Barcode" style="display:inline; width:120px" [disabled]="preView"
+                 [typeahead]="locbarcodes$|async"
+ 
+                 typeaheadOptionField="BarcodeValue"
+                 [isAnimated]="true"
+                 (typeaheadOnSelect)="onSelect($event)"
+                 (typeaheadNoResults)="typeaheadNoResults($event)"
+                 (typeaheadOnBlur)="typeaheadOnBlur($event)"
+                 class="form-control">
+          <button type="button" class="btn btn-sm btn-primary" (click)="typeaheadOnBtn(env.Barcode)" [disabled]="nors || preView || !env.Barcode"><i class="fa fa-dot-circle-o"></i> 新增條碼</button>
+          <!-- <button type="reset" class="btn btn-sm btn-danger" (click)="refobj={};"><i class="fa fa-ban"></i>重設</button>-->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" style="text-align:right">
+      <button type="button" class="btn btn-sm " [ngClass]="{'btn-success':!preView,'btn-danger':preView}" (click)="preView=!preView;genPost()" [disabled]="(locMapRs$|async).length==0"><i class="fa fa-dot-circle-o"></i> {{preView ? '取消' : '預覽'}}</button>
+      <span *ngIf="preView">
+        <span style="min-width:130px;display:inline-block">
+          <span> {{env.doProcess  ? '執行':'稍後執行'}}</span>
+          <label class="switch switch-label switch-pill switch-warning" style="margin-bottom:-10px;">
+            <input checked="" class="switch-input" type="checkbox" [(ngModel)]="env.doProcess">
+            <span class="switch-slider" data-checked="✓" data-unchecked="✕"></span>
+          </label>
+        </span>
+
+        <button type="button" class="btn btn-sm btn-primary" (click)="doAdd()"><i class="fa fa-save"></i> 新增</button>
+
+      </span>
+
+    </div>
+    <div class="card-body" *ngIf="xl.pagerObj.Results$|async">
+      <div class="content-wrapper">
+        <table class="table">
+          <tr>
+            <th>
+              <app-sortprop propname="VandorName" displayname="廠商名" [prs]="xl"></app-sortprop>
+            </th>
+            <th>
+              <app-sortprop propname="DeviceName" displayname="設備名" [prs]="xl"></app-sortprop>
+            </th>
+            <th>
+              <app-sortprop propname="FormateName" displayname="規格名" [prs]="xl"></app-sortprop>
+            </th>
+            <th>
+              <app-sortprop propname="BarcodeValue" displayname="條碼" [prs]="xl"></app-sortprop>
+            </th>
+            <th>
+              <app-sortprop propname="Count" displayname="數量" [prs]="xl"></app-sortprop>
+            </th>
+            <th style="text-align:right;" *ngIf="!preView">
+              操作
+            </th>
+          </tr>
+          <tr *ngFor="let e of locRs$|async">
+            <th>
+              {{e.VandorName}}
+            </th>
+            <td>
+              {{e.DeviceName}}
+            </td>
+            <td>
+              {{e.FormateName}}
+            </td>
+            <td>
+              {{e.BarcodeValue}}
+            </td>
+            <td>
+              {{e.Count}}
+            </td>
+            <td style="text-align:right;" *ngIf="!preView">
+              <input type="checkbox" [(ngModel)]="e.Selected" (ngModelChange)="fitmap(e)" *ngIf="e.WithBarcodes" />
+              <input type="number" [(ngModel)]="e.SetCount" [max]="e.Count" min="0"
+                     (keypress)="tl.fixnum($event)"
+                     (ngModelChange)="fitmap(e)" *ngIf="!e.WithBarcodes" />
+            </td>
+          </tr>
+
+        </table>
+      </div>
+      <div class="row" *ngIf="xl.pagerObj.RowCount>0">
+        <div class="col-md-6">
+          <pagination [totalItems]="xl.pagerObj.RowCount" [itemsPerPage]="xl.pagerObj.PageSize" [(ngModel)]="xl.pagerObj.CurrentPage"
+                      (pageChanged)="xl.chPage($event.page)"
+                      [maxSize]="xl.pagermaxSize"
+                      [rotate]="false"></pagination>
+        </div>
+        <div class="col-md-3" style="text-align:center">
+          <span>total : {{xl.pagerObj.RowCount}} | </span>
+          <span>{{xl.pagerObj.CurrentPage}}/{{xl.pagerObj.PageCount}} pages</span>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-6" style="text-align:right">每頁</div>
+            <div class="col-md-4">
+              <select (change)="xl.chPageSize(xl.pagerObj.PageSize)" [(ngModel)]="xl.pagerObj.PageSize" class="form-control form-control-sm">
+                <option [ngValue]="2">2</option>
+                <option [ngValue]="3">3</option>
+                <option [ngValue]="4">4</option>
+                <option [ngValue]="5">5</option>
+                <option [ngValue]="10">10</option>
+              </select>
+            </div>
+            <div class="col-md-2" style="text-align:left">筆</div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

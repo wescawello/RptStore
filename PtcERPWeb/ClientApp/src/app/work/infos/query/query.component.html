@@ -1,0 +1,221 @@
+<div class="animated fadeIn">
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body" *ngIf="stockView.pagerObj.Results$|async">
+          <div class="content-wrapper">
+            <table class="table">
+              <thead>
+                <tr>
+                
+                  <th> <app-sortprop propname="StockUnitName" displayname="StockUnitName" [prs]="stockView"></app-sortprop>  </th>
+                  <th><app-sortprop propname="Count" displayname="Count" [prs]="stockView"></app-sortprop></th>
+
+                  <th> <app-sortprop propname="Price" displayname="總金額" [prs]="stockView"></app-sortprop>  </th>
+ 
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let e of stockViewRs$|async" (click)="e.ck()" >
+                  <th>{{e.StockUnitName}}</th>
+                  <td>{{e.Count|number:'.0-0'}}</td>
+                  <th>{{e.Price| currency:'TW':'':'.2-2'}}</th>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="row" *ngIf="stockView.pagerObj?.RowCount>0">
+            <div class="col-md-6">
+              <pagination [totalItems]="stockView.pagerObj.RowCount" [itemsPerPage]="stockView.pagerObj.PageSize" [(ngModel)]="stockView.pagerObj.CurrentPage"
+                          (pageChanged)="stockView.chPage($event.page)"
+                          [maxSize]="stockView.pagermaxSize"
+                          [rotate]="false"></pagination>
+            </div>
+            <div class="col-md-3" style="text-align:center">
+              <span>total : {{stockView.pagerObj.RowCount}} | </span>
+              <span>{{stockView.pagerObj.CurrentPage}}/{{stockView.pagerObj.PageCount}} pages</span>
+            </div>
+            <div class="col-md-3">
+              <div class="row">
+                <div class="col-md-6" style="text-align:right">每頁</div>
+                <div class="col-md-4">
+                  <select (change)="stockView.chPageSize(stockView.pagerObj.PageSize)" [(ngModel)]="stockView.pagerObj.PageSize" class="form-control form-control-sm">
+                    <option [ngValue]="2">2</option>
+                    <option [ngValue]="3">3</option>
+                    <option [ngValue]="4">4</option>
+                    <option [ngValue]="5">5</option>
+                    <option [ngValue]="10">10</option>
+                  </select>
+                </div>
+                <div class="col-md-2" style="text-align:left">筆</div>
+              </div>
+
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body" *ngIf="prodView.pagerObj.Results$|async">
+          <div class="content-wrapper">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col"><app-sortprop propname="ProdName" displayname="ProdName" [prs]="prodView"></app-sortprop></th>
+                  <th><app-sortprop propname="Count" displayname="Count" [prs]="prodView"></app-sortprop></th>
+                  <th> <app-sortprop propname="Price" displayname="總金額" [prs]="prodView"></app-sortprop>  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let e of prodViewRs$|async" (click)="e.ck()" >
+                  <th>{{e.ProdName}}</th>
+                  <td>{{e.Count|number:'.0-0'}}</td>
+                  <th>{{e.Price | currency:'TW':'':'.2-2'}}</th>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="row" *ngIf="prodView.pagerObj?.RowCount>0">
+            <div class="col-md-6">
+              <pagination [totalItems]="prodView.pagerObj.RowCount" [itemsPerPage]="prodView.pagerObj.PageSize" [(ngModel)]="prodView.pagerObj.CurrentPage"
+                          (pageChanged)="prodView.chPage($event.page)"
+                          [maxSize]="prodView.pagermaxSize"
+                          [rotate]="false"></pagination>
+            </div>
+            <div class="col-md-3" style="text-align:center">
+              <span>total : {{prodView.pagerObj.RowCount}} | </span>
+              <span>{{prodView.pagerObj.CurrentPage}}/{{prodView.pagerObj.PageCount}} pages</span>
+            </div>
+            <div class="col-md-3">
+              <div class="row">
+                <div class="col-md-6" style="text-align:right">每頁</div>
+                <div class="col-md-4">
+                  <select (change)="prodView.chPageSize(prodView.pagerObj.PageSize)" [(ngModel)]="prodView.pagerObj.PageSize" class="form-control form-control-sm">
+                    <option [ngValue]="2">2</option>
+                    <option [ngValue]="3">3</option>
+                    <option [ngValue]="4">4</option>
+                    <option [ngValue]="5">5</option>
+                    <option [ngValue]="10">10</option>
+                  </select>
+                </div>
+                <div class="col-md-2" style="text-align:left">筆</div>
+              </div>
+
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+  <div class="card">
+    <div class="card-header" style="text-align:right">
+      <button type="button" class="btn btn-sm btn-primary" (click)="cud.preQuery(qmodel)"><i class="fa fa-dot-circle-o"></i> Query</button>
+      <button type="reset" class="btn btn-sm btn-danger" (click)="Clear(); search();"><i class="fa fa-ban"></i> Reset</button>
+    </div>
+    <div class="card-body" *ngIf="cud.pagerObj.Results$|async">
+      <div class="content-wrapper">
+        <table class="table"  >
+          <thead>
+            <!--class="thead-dark"-->
+            <tr>
+              <th scope="col">
+                <app-sortprop propname="ProdName" displayname="ProdName" [prs]="cud"></app-sortprop>
+              </th>
+              <th> <app-sortprop propname="StockUnitName" displayname="StockUnitName" [prs]="cud"></app-sortprop>  </th>
+              <th ><app-sortprop propname="Count" displayname="Count" [prs]="cud"></app-sortprop></th>
+ 
+              <th> <app-sortprop propname="Price" displayname="總金額" [prs]="cud"></app-sortprop>  </th>
+            
+              <th>
+                操作
+              </th>
+            </tr>
+          </thead>
+          <!--<thead>
+            <tr>
+
+              <th mat-sort-header="3">廠商名稱 </th>
+              <th mat-sort-header="5">設備名稱</th>
+              <th mat-sort-header="7">零件名稱</th>
+              <th mat-sort-header="8">起始時間</th>
+              <th mat-sort-header="9">成本</th>
+              <th scope="col">
+                Action
+              </th>
+            </tr>
+          </thead>-->
+          <tbody>
+            <tr *ngFor="let e of cud.pagerObj.Results$|async">
+              <th>{{e.ProdName}}</th>
+              <th>{{e.StockUnitName}}</th>
+              <td>{{e.Count}}</td>
+ 
+              <th>{{e.Price}}</th>
+
+              
+
+
+              <td style="text-align:right;">
+
+
+
+                <button type="button" class="btn btn-sm btn-info" (click)="action(2,e)">
+                  <i class="fa" [ngClass]="{ 'fa-eye' :true}"></i>
+                  view
+                </button>
+                <!--<button type="button" class="btn btn-sm btn-info" (click)="action(2,qmodel)"><i class="fa fa-edit"></i> sort</button>-->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row" *ngIf="cud.pagerObj?.RowCount>0">
+        <div class="col-md-6">
+          <pagination [totalItems]="cud.pagerObj.RowCount" [itemsPerPage]="cud.pagerObj.PageSize" [(ngModel)]="cud.pagerObj.CurrentPage"
+                      (pageChanged)="cud.chPage($event.page)"
+                      [maxSize]="cud.pagermaxSize"
+                      [rotate]="false"></pagination>
+        </div>
+        <div class="col-md-3" style="text-align:center">
+          <span>total : {{cud.pagerObj.RowCount}} | </span>
+          <span>{{cud.pagerObj.CurrentPage}}/{{cud.pagerObj.PageCount}} pages</span>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-6" style="text-align:right">每頁</div>
+            <div class="col-md-4">
+              <select (change)="cud.chPageSize(cud.pagerObj.PageSize)" [(ngModel)]="cud.pagerObj.PageSize" class="form-control form-control-sm">
+                <option [ngValue]="2">2</option>
+                <option [ngValue]="3">3</option>
+                <option [ngValue]="4">4</option>
+                <option [ngValue]="5">5</option>
+                <option [ngValue]="10">10</option>
+              </select>
+            </div>
+            <div class="col-md-2" style="text-align:left">筆</div>
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <br />
+   
+
+</div>

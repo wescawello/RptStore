@@ -1,0 +1,54 @@
+<div class="animated fadeIn">
+
+  <div class="row">
+
+    <div class="col-md-12">
+      <div class="card">
+
+        <div class="card-body">
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">設備名稱：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Name" type="text" placeholder="請輸入設備名稱" [ngModelOptions]="{standalone: true}" required>
+              <!--       <span class="help-block">請輸入廠商名稱</span>-->
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">廠商清單：</label>
+            <div class="col-md-9">
+              <ng-multiselect-dropdown [placeholder]="'可多選'"
+                                       [data]="mvender$|async"
+                                       [(ngModel)]="refobj.VandorDevices"
+                                       [settings]="dropdownSettings"
+                                       (onSelect)="onItemSelect($event)"
+                                       (onSelectAll)="onSelectAll($event)">
+              </ng-multiselect-dropdown>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">顯示：</label>
+            <div class="col-md-9">
+              <mat-radio-group aria-label="Select an status" [(ngModel)]="refobj.Display" required>
+                <mat-radio-button [value]="true">是</mat-radio-button>
+                <mat-radio-button [value]="false">否</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+          <div class="form-group row">
+            <pre>
+ 
+</pre>
+          </div>
+        </div>
+          <div class="card-footer">
+            <button type="button" class="btn btn-sm btn-primary" (click)="tl.add(refobj)" [disabled]="!refobj.Name || refobj.Display==null || !refobj.VandorDevices || refobj.VandorDevices.length==0 "><i class="fa fa-dot-circle-o"></i> 新增</button>
+            <button type="reset" class="btn btn-sm btn-danger" (click)="refobj={Display:true};"><i class="fa fa-ban"></i>重設</button>
+
+
+          </div>
+        </div>
+
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,229 @@
+<div class="animated fadeIn">
+ 
+  <div class="row">
+
+
+
+    <div class="col-md-12">
+      <div class="card">
+
+        <div class="card-body">
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">規格名稱：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="qmodel.Name" type="text" placeholder="請輸入規格名稱" [ngModelOptions]="{standalone: true}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">廠商：</label>
+            <div class="col-md-3">
+              <select class="form-control" id="txt-stn-vname" name="loadline-bmain" [(ngModel)]="qmodel.vandorId" (ngModelChange)="dvchange($event)" [ngModelOptions]="{standalone: true}">
+                <option [ngValue]="0">請選擇</option>
+                <option *ngFor="let v of (xvandors$|async)" [ngValue]="v.Id">{{v.Name}}</option>
+              </select>
+            </div>
+            <label class="col-md-3 col-form-label">設備：</label>
+            <div class="col-md-3">
+              <select class="form-control" id="txt-stn-vname" name="loadline-bmain" [(ngModel)]="qmodel.deviceId" (ngModelChange)="ddchange($event)" [ngModelOptions]="{standalone: true}">
+                <option [ngValue]="0">請選擇</option>
+                <option *ngFor="let v of (xdevices$|async)" [ngValue]="v.Id">{{v.Name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">組數：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="qmodel.SetCount" type="number" placeholder="設備單位數" min="1" [ngModelOptions]="{standalone: true}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">購價：</label>
+            <div class="col-md-2">
+              <input class="form-control" [(ngModel)]="qmodel.PurchasePriceMin" type="number" placeholder="設備購價" [ngModelOptions]="{standalone: true}">
+            </div>
+            <div class="col-md-5">
+              <ng5-slider [(value)]="qmodel.PurchasePriceMin" style="margin-top:15px;"
+                          [(highValue)]="qmodel.PurchasePriceMax"
+                          [options]="{
+          floor: 0,
+          ceil: 1000,
+          hideLimitLabels: true,
+          hidePointerLabels: true
+        }"
+                          [manualRefresh]="slidersRefresh"></ng5-slider>
+
+
+            </div>
+            <div class="col-md-2">
+              <input class="form-control" [(ngModel)]="qmodel.PurchasePriceMax" type="number" [ngModelOptions]="{standalone: true}">
+            </div>
+
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">售價：</label>
+            <div class="col-md-2">
+              <input class="form-control" [(ngModel)]="qmodel.SalePriceMin" type="number" placeholder="設備售價" [ngModelOptions]="{standalone: true}">
+            </div>
+            <div class="col-md-5">
+              <ng5-slider [(value)]="qmodel.SalePriceMin" style="margin-top:15px;"
+                          [(highValue)]="qmodel.SalePriceMax"
+                          [options]="{
+          floor: 0,
+          ceil: 1000,
+          hideLimitLabels: true,
+          hidePointerLabels: true
+        }"
+                          [manualRefresh]="slidersRefresh"></ng5-slider>
+
+
+            </div>
+            <div class="col-md-2">
+              <input class="form-control" [(ngModel)]="qmodel.SalePriceMax" type="number" [ngModelOptions]="{standalone: true}">
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">狀態：</label>
+            <div class="col-md-9">
+              <mat-radio-group aria-label="Select an status" [(ngModel)]="qmodel.Display">
+                <mat-radio-button [value]="null">全部</mat-radio-button>
+                <mat-radio-button [value]="true">啟用</mat-radio-button>
+                <mat-radio-button [value]="false">停用</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">組數相乘：</label>
+            <div class="col-md-9">
+              <mat-radio-group aria-label="Select an status" [(ngModel)]="qmodel.DoTimes">
+                <mat-radio-button [value]="null">全部</mat-radio-button>
+                <mat-radio-button [value]="true">啟用</mat-radio-button>
+                <mat-radio-button [value]="false">停用</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">自訂條碼：</label>
+            <div class="col-md-9">
+              <mat-radio-group aria-label="Select an status" [(ngModel)]="qmodel.WithBarcodes">
+                <mat-radio-button [value]="null">全部</mat-radio-button>
+                <mat-radio-button [value]="true">啟用</mat-radio-button>
+                <mat-radio-button [value]="false">停用</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+        </div>
+
+        </div>
+
+    </div>
+
+  </div>
+
+
+  
+
+  <div class="card">
+    <div class="card-header" style="text-align:right">
+      <button type="button" class="btn btn-sm btn-primary" (click)="tl.prequery(qmodel)"><i class="fa fa-dot-circle-o"></i> Query</button>
+      <button type="reset" class="btn btn-sm btn-danger" (click)="Clear(); search();"><i class="fa fa-ban"></i> Reset</button>
+    </div>
+    <div class="card-body" *ngIf="tl.pagerObj.Results$|async">
+      <div class="content-wrapper">
+        <table class="table" matSort (matSortChange)="sortData($event)">
+          <thead>
+            <!--class="thead-dark"-->
+            <tr>
+              <th scope="col">
+                <app-sortprop propname="Name" displayname="規格名稱"></app-sortprop>
+              </th>
+              <th scope="col">
+                <app-sortprop propname="SetCount" displayname="組數"></app-sortprop>
+              </th>
+              <th scope="col">
+                <app-sortprop propname="DoTimes" displayname="組數相乘"></app-sortprop>
+              </th>
+              <th scope="col">
+                <app-sortprop propname="WithBarcodes" displayname="自訂條碼"></app-sortprop>
+              </th>
+              <th scope="col" style="text-align:right;">
+                操作
+              </th>
+            </tr>
+          </thead>
+          <!--<thead>
+            <tr>
+
+              <th mat-sort-header="3">廠商名稱 </th>
+              <th mat-sort-header="5">設備名稱</th>
+              <th mat-sort-header="7">零件名稱</th>
+              <th mat-sort-header="8">起始時間</th>
+              <th mat-sort-header="9">成本</th>
+              <th scope="col">
+                Action
+              </th>
+            </tr>
+          </thead>-->
+          <tbody>
+            <tr *ngFor="let e of tl.pagerObj.Results$|async">
+              <th scope="row">{{e.Name}}</th>
+              <td scope="row">
+                {{e.SetCount}}
+              </td>
+              <td scope="row">
+                <mat-radio-group aria-label="Select an status" [(ngModel)]="e.DoTimes" [disabled]="true">
+                  <mat-radio-button [value]="true">Y</mat-radio-button>
+                  <mat-radio-button [value]="false">N</mat-radio-button>
+                </mat-radio-group>
+              </td>
+              <td scope="row">
+                <mat-radio-group aria-label="Select an status" [(ngModel)]="e.WithBarcodes" [disabled]="true">
+                  <mat-radio-button [value]="true">Y</mat-radio-button>
+                  <mat-radio-button [value]="false">N</mat-radio-button>
+                </mat-radio-group>
+              </td>
+              <td scope="row" style="text-align:right;">
+                <button type="button" class="btn btn-sm btn-info" (click)="action(2,e)"><i class="fa fa-edit"></i> edit</button>
+                <!--<button type="button" class="btn btn-sm btn-info" (click)="action(2,qmodel)"><i class="fa fa-edit"></i> sort</button>-->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row" *ngIf="tl.pagerObj?.RowCount>0">
+        <div class="col-md-6">
+          <pagination [totalItems]="tl.pagerObj.RowCount" [itemsPerPage]="tl.pagerObj.PageSize" [(ngModel)]="tl.pagerObj.CurrentPage"
+                      (pageChanged)="tl.chpage($event.page)"
+                      [maxSize]="tl.pagermaxSize"
+                      [rotate]="false"></pagination>
+        </div>
+        <div class="col-md-3" style="text-align:center">
+          <span>total : {{tl.pagerObj.RowCount}} | </span>
+          <span>{{tl.pagerObj.CurrentPage}}/{{tl.pagerObj.PageCount}} pages</span>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-6" style="text-align:right">每頁</div>
+            <div class="col-md-4">
+              <select (change)="tl.chpagesize(tl.pagerObj.PageSize)" [(ngModel)]="tl.pagerObj.PageSize" class="form-control form-control-sm">
+                <option [ngValue]="2">2</option>
+                <option [ngValue]="3">3</option>
+                <option [ngValue]="4">4</option>
+                <option [ngValue]="5">5</option>
+                <option [ngValue]="10">10</option>
+              </select>
+            </div>
+            <div class="col-md-2" style="text-align:left">筆</div>
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <br />
+
+
+</div>

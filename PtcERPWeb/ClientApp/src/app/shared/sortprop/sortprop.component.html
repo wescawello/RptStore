@@ -1,0 +1,26 @@
+<!--<div style="display:flex">
+  <span style="font-size:large;flex:3"></span>
+  <div style="display:flex;flex:1;cursor:pointer">
+    <i class="fa fa-angle-up fa-lg " *ngIf="tl.qorder[propname]=='asc'" (click)="tl.setOrder(propname,'desc')"></i>
+    <i class="fa fa-angle-down fa-lg " *ngIf="tl.qorder[propname]=='desc'" (click)="tl.setOrder(propname,'')"></i>
+    <i class="fa fa-exchange fa-lg " *ngIf="!tl.qorder[propname]" (click)="tl.setOrder(propname,'asc')"></i>
+
+
+  </div>
+
+</div>-->
+<!--<mat-icon aria-hidden="false" aria-label="Example home icon" (click)="tl.setOrder(propname,'')"
+          *ngIf="tl.qorder[propname]=='desc'">arrow_drop_up</mat-icon>
+<mat-icon aria-hidden="false" aria-label="Example home icon" (click)="tl.setOrder(propname,'asc')"
+          *ngIf="!tl.qorder[propname]">unfold_less</mat-icon>-->
+  <ng-container [ngSwitch]="qorder[propname]">
+    <ng-container *ngSwitchCase="'asc'">
+      <span (click)="setOrder(propname,'desc')"> {{displayname}} <fa-icon [icon]="faSortUp"></fa-icon></span>
+    </ng-container>
+    <ng-container *ngSwitchCase="'desc'">
+      <span (click)="setOrder(propname,'')"> {{displayname}} <fa-icon [icon]="faSortDown"></fa-icon></span>
+    </ng-container>
+    <ng-container *ngSwitchDefault>
+      <span (click)="setOrder(propname,'asc')"> {{displayname}} <fa-icon [icon]="faSort"></fa-icon></span>
+    </ng-container>
+  </ng-container>

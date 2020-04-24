@@ -1,0 +1,386 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">售貨單號：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.ApplyNumber" type="text" placeholder="請輸售貨單號" [ngModelOptions]="{standalone: true}" required>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">客戶：</label>
+            <div class="col-md-9">
+              <select class="form-control" id="txt-stn-vname" name="loadline-bmain" [(ngModel)]="refobj.CustomerId" (ngModelChange)="dvchange($event)" [ngModelOptions]="{standalone: true}">
+                <option [ngValue]="0">請選擇</option>
+                <option *ngFor="let v of (sconf.xcustomers$|async)" [ngValue]="v.Id">{{v.Name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">聯絡人：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Customer.Connecter" type="text" placeholder="請輸入保管人" [ngModelOptions]="{standalone: true}" required>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">月結方式：</label>
+            <div class="col-md-9">
+              <select class="form-control" id="txt-stn-vname" name="loadline-bmain" [(ngModel)]="refobj.Customer.PayMethod" [ngModelOptions]="{standalone: true}">
+                <option [ngValue]="null">請選擇</option>
+                <option [ngValue]="1">月結</option>
+                <option [ngValue]="2">現結</option>
+
+              </select>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card" *ngIf="refobj.Customer.Connecter && refobj.ApplyNumber">
+
+        <div class="card-body">
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">統編：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Customer.TaxId" type="text" placeholder="請輸入統編" [ngModelOptions]="{standalone: true}" required>
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">地址：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Customer.Address" type="text" placeholder="請輸入地址" [ngModelOptions]="{standalone: true}" required>
+
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">發票：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Invoice" type="text" placeholder="請輸入發票" [ngModelOptions]="{standalone: true}" required>
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">電話：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Customer.Phone" type="text" placeholder="請輸入電話" [ngModelOptions]="{standalone: true}" required>
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">銷售日期</label>
+            <div class="col-md-9">
+              <div class="input-group">
+                <input id="datepicker-purchase_date_s" type="text" class="form-control" placeholder="yyyy/mm/dd"
+                       bsDatepicker
+                       [(bsValue)]="refobj.SaleDate"
+                       value="{{ refobj.SaleDate | date: 'yyyy/MM/dd' }}"
+                       [bsConfig]="{ dateInputFormat: 'YYYY/MM/DD' }">
+
+              </div>
+            </div>
+          </div>
+        </div>
+         
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" style="text-align:right">
+
+      倍率:<input class="form-control" [(ngModel)]="refobj.Magnification" type="number" placeholder="請輸入倍率" [ngModelOptions]="{standalone: true}"  (ngModelChange)="genPost()" style="width:120px;display:inline;">
+
+
+
+       
+      <button type="button" class="btn btn-sm " [ngClass]="{'btn-success':!env.preViewAll,'btn-danger':env.preViewAll}" (click)="env.preViewAll=!env.preViewAll;genPost()" [disabled]="(locMapRs$|async).length==0"><i class="fa fa-dot-circle-o"></i> {{env.preViewAll ? '取消' : '預覽'}}</button>
+      <span *ngIf="env.preViewAll">
+
+
+        <button type="button" class="btn btn-sm btn-primary" (click)="doAdd()"     [disabled]="!refobj.ApplyNumber"  ><i class="fa fa-save"></i> 新增</button>
+
+
+      </span>
+
+    </div>
+
+
+    <div class="card-body" *ngIf="!env.preViewAll && cud.pagerObj.Results$|async">
+      <div class="content-wrapper">
+        <table class="table" matSort (matSortChange)="sortData($event)">
+          <thead>
+            <!--class="thead-dark"-->
+            <tr>
+              <th>
+                <app-sortprop propname="TrackId" displayname="運單號" [prs]="cud"></app-sortprop>
+              </th>
+              <th>
+                <app-sortprop propname="Keeper" displayname="保管人" [prs]="cud"></app-sortprop>
+              </th>
+              <th> <app-sortprop propname="StockUnitName" displayname="倉別" [prs]="cud"></app-sortprop>  </th>
+              <th> <app-sortprop propname="Remark" displayname="註記" [prs]="cud"></app-sortprop>  </th>
+              <th> <app-sortprop propname="CreateDate" displayname="創立日" [prs]="cud"></app-sortprop>  </th>
+              <th> <app-sortprop propname="TotalBarcodes" displayname="總量" [prs]="cud"></app-sortprop>  </th>
+              <th> <app-sortprop propname="OrgPrice" displayname="總成本" [prs]="cud"></app-sortprop>  </th>
+              <th> <app-sortprop propname="SalePriceDefault" displayname="總預售價" [prs]="cud"></app-sortprop>  </th>
+              <th style="text-align:right;">
+                操作
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e of locRs$|async">
+              <th>{{e.TrackId}}</th>
+              <td>{{e.Keeper}}</td>
+              <th>{{e.StockUnitName}}</th>
+              <th>{{e.Remark}}</th>
+              <th>{{e.CreateDate|date:'yyyy/MM/dd'}}</th>
+              <th>{{e.TotalBarcodes}}</th>
+              <th>{{e.OrgPrice}}</th>
+              <th>{{e.SalePriceDefault}}</th>
+              <td style="text-align:right;">
+                <button type="button" class="btn btn-sm btn-info" (click)="preView=false;pickobj=e;modal.show();e.read()">
+                  <i class="fa" [ngClass]="{ 'fa-eye' :true}"></i>
+                  view
+                </button>
+                <input type="checkbox" [(ngModel)]="e.Selected" (ngModelChange)="fitmap(e)" *ngIf="!e.ProcessDate" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row" *ngIf="cud.pagerObj?.RowCount>0">
+        <div class="col-md-6">
+          <pagination [totalItems]="cud.pagerObj.RowCount" [itemsPerPage]="cud.pagerObj.PageSize" [(ngModel)]="cud.pagerObj.CurrentPage"
+                      (pageChanged)="cud.chPage($event.page)"
+                      [maxSize]="cud.pagermaxSize"
+                      [rotate]="false"></pagination>
+        </div>
+        <div class="col-md-3" style="text-align:center">
+          <span>total : {{cud.pagerObj.RowCount}} | </span>
+          <span>{{cud.pagerObj.CurrentPage}}/{{cud.pagerObj.PageCount}} pages</span>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-6" style="text-align:right">每頁</div>
+            <div class="col-md-4">
+              <select (change)="cud.chPageSize(cud.pagerObj.PageSize)" [(ngModel)]="cud.pagerObj.PageSize" class="form-control form-control-sm">
+                <option [ngValue]="2">2</option>
+                <option [ngValue]="3">3</option>
+                <option [ngValue]="4">4</option>
+                <option [ngValue]="5">5</option>
+                <option [ngValue]="10">10</option>
+              </select>
+            </div>
+            <div class="col-md-2" style="text-align:left">筆</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card-body" *ngIf="env.preViewAll && cudSale.pagerObj.Results$|async">
+      <div class="content-wrapper">
+ 
+ 
+        訂單總額:{{refobj.OrderPrice}}
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>
+                <app-sortprop propname="BarcodeValue" displayname="條碼" [prs]="cudSale"></app-sortprop>
+              </th>
+              <th>
+                <app-sortprop propname="StockUnitName" displayname="倉別" [prs]="cudSale"></app-sortprop>
+              </th>
+              <th> <app-sortprop propname="VandorName" displayname="廠商" [prs]="cudSale"></app-sortprop>  </th>
+              <th> <app-sortprop propname="DeviceName" displayname="設備" [prs]="cudSale"></app-sortprop>  </th>
+              <th> <app-sortprop propname="FormateName" displayname="規格" [prs]="cudSale"></app-sortprop>  </th>
+              <th> <app-sortprop propname="OrgPrice" displayname="成本" [prs]="cudSale"></app-sortprop>  </th>
+              <th> <app-sortprop propname="SalePrice" displayname="售價" [prs]="cud"></app-sortprop>  </th>
+              <!--<th style="text-align:right;">
+                操作
+              </th>-->
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e of cudSaleLoc$|async">
+              <th>{{e.BarcodeValue}}</th>
+              <td>{{e.StockUnitName}}</td>
+              <th>{{e.VandorName}}</th>
+              <th>{{e.DeviceName}}</th>
+              <th>{{e.FormateName}}</th>
+              <th>{{e.OrgPrice}}</th>
+              <td style="text-align:right;">
+                <input type="number" [(ngModel)]="e.SalePrice" (ngModelChange)="e.chPrice(e.SalePrice)" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row" *ngIf="cudSale.pagerObj?.RowCount>0">
+        <div class="col-md-6">
+          <pagination [totalItems]="cudSale.pagerObj.RowCount" [itemsPerPage]="cudSale.pagerObj.PageSize" [(ngModel)]="cudSale.pagerObj.CurrentPage"
+                      (pageChanged)="cudSale.chPage($event.page)"
+                      [maxSize]="cudSale.pagermaxSize"
+                      [rotate]="false"></pagination>
+        </div>
+        <div class="col-md-3" style="text-align:center">
+          <span>total : {{cudSale.pagerObj.RowCount}} | </span>
+          <span>{{cudSale.pagerObj.CurrentPage}}/{{cudSale.pagerObj.PageCount}} pages</span>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-6" style="text-align:right">每頁</div>
+            <div class="col-md-4">
+              <select (change)="cudSale.chPageSize(cudSale.pagerObj.PageSize)" [(ngModel)]="cudSale.pagerObj.PageSize" class="form-control form-control-sm">
+                <option [ngValue]="2">2</option>
+                <option [ngValue]="3">3</option>
+                <option [ngValue]="4">4</option>
+                <option [ngValue]="5">5</option>
+                <option [ngValue]="10">10</option>
+              </select>
+            </div>
+            <div class="col-md-2" style="text-align:left">筆</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+
+  </div>
+</div>
+<div class="modal fade" bsModal #modal="bs-modal"
+     tabindex="-1" role="dialog" aria-labelledby="dialog-events-name"
+      >
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-events-name" class="modal-title pull-left">倉別:{{pickobj?.StockUnitName}} 確認新增品項  </h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h4> {{xl.pagerObj.ExtMsg.allOrgPrice}}</h4>
+        <div class="card">
+          <div class="card-body" *ngIf="xl.pagerObj.Results$|async">
+            <div class="content-wrapper">
+              <table class="table">
+                <tr>
+                  <th>
+                    <app-sortprop propname="VandorName" displayname="廠商名" [prs]="xl"></app-sortprop>
+                  </th>
+                  <th>
+                    <app-sortprop propname="DeviceName" displayname="設備名" [prs]="xl"></app-sortprop>
+                  </th>
+                  <th>
+                    <app-sortprop propname="FormateName" displayname="規格名" [prs]="xl"></app-sortprop>
+                  </th>
+                  <th>
+                    <app-sortprop propname="BarcodeValue" displayname="條碼" [prs]="xl"></app-sortprop>
+                  </th>
+                  <th>
+                    <app-sortprop propname="Count" displayname="數量" [prs]="xl"></app-sortprop>
+                  </th>
+                  <th *ngIf="preView">
+                    <app-sortprop propname="OrgPrice" displayname="成本" [prs]="xl"></app-sortprop>
+                  </th>
+                  <th *ngIf="preView">
+                    <app-sortprop propname="SalePriceDefault" displayname="預售價" [prs]="xl"></app-sortprop>
+                  </th>
+                  <!--<th   style="text-align:right;" *ngIf="!preView">
+              操作
+            </th>-->
+                </tr>
+                <tr *ngFor="let e of xl.pagerObj.Results$|async">
+                  <th>
+                    {{e.VandorName}}
+                  </th>
+                  <td>
+                    {{e.DeviceName}}
+                  </td>
+                  <td>
+                    {{e.FormateName}}
+                  </td>
+                  <td>
+                    {{e.BarcodeValue}}
+                  </td>
+                  <td>
+                    {{e.Count}}
+                  </td>
+                  <td *ngIf="preView">
+                    {{e.OrgPrice}}
+                  </td>
+                  <td *ngIf="preView">
+                    {{e.SalePriceDefault}}
+                  </td>
+                  <!--<td style="text-align:right;" *ngIf="!preView">
+              <input type="checkbox" [(ngModel)]="e.Selected"   *ngIf="e.WithBarcodes" />
+              <input type="number" [(ngModel)]="e.SetCount" [max]="e.Count" min="0"
+                     (keypress)="tl.fixnum($event)"
+                     (ngModelChange)="fitmap(e)" *ngIf="!e.WithBarcodes" />
+            </td>-->
+                </tr>
+              </table>
+            </div>
+            <div class="row" *ngIf="xl.pagerObj?.RowCount>0">
+              <div class="col-md-6">
+                <pagination [totalItems]="xl.pagerObj.RowCount" [itemsPerPage]="xl.pagerObj.PageSize" [(ngModel)]="xl.pagerObj.CurrentPage"
+                            (pageChanged)="xl.chPage($event.page)"
+                            [maxSize]="xl.pagermaxSize"
+                            [rotate]="false"></pagination>
+              </div>
+              <div class="col-md-3" style="text-align:center">
+                <span>total : {{xl.pagerObj.RowCount}} | </span>
+                <span>{{xl.pagerObj.CurrentPage}}/{{xl.pagerObj.PageCount}} pages</span>
+              </div>
+              <div class="col-md-3">
+                <div class="row">
+                  <div class="col-md-6" style="text-align:right">每頁</div>
+                  <div class="col-md-4">
+                    <select (change)="xl.chPageSize(xl.pagerObj.PageSize)" [(ngModel)]="xl.pagerObj.PageSize" class="form-control form-control-sm">
+                      <option [ngValue]="2">2</option>
+                      <option [ngValue]="3">3</option>
+                      <option [ngValue]="4">4</option>
+                      <option [ngValue]="5">5</option>
+                      <option [ngValue]="10">10</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2" style="text-align:left">筆</div>
+                </div>
+
+
+              </div>
+            </div>
+
+
+
+
+
+          </div>
+        </div>
+
+
+      </div>
+      <div class="modal-footer">
+
+        <button class="btn btn-info" (click)="preView=!preView;pickobj.read() " *ngIf="pickobj">  {{  preView ? '總覽'  :  '細目'  }} </button>
+
+        <button class="btn btn-warning" (click)="modal.hide()">取消</button>
+        <!--<button class="btn btn-danger" (click)="gneSaleLoc() ;modal.hide();"> 確定</button>-->
+
+      </div>
+      </div>
+  </div>
+</div>

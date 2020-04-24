@@ -1,0 +1,14 @@
+<tabset>
+  <tab [active]="tl.activatedTabIndex==0">
+    <ng-template tabHeading>{{(tl.tabNames$ | async).query}}</ng-template>
+    <app-query></app-query>
+  </tab>
+  <tab *ngIf="tl.addable" [active]="tl.activatedTabIndex==1">
+    <ng-template tabHeading>{{(tl.tabNames$ | async).add}}</ng-template>
+    <app-add></app-add>
+  </tab>
+  <tab *ngIf="tl.editable" [active]="tl.activatedTabIndex==2">
+    <ng-template tabHeading>{{(tl.tabNames$ | async).edit}}</ng-template>
+    <app-edit></app-edit>
+  </tab>
+</tabset>

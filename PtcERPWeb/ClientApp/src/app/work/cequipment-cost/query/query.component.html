@@ -1,0 +1,152 @@
+<div class="container">
+  <div class="form-group row">
+    <label class="col-2 col-form-label">請購單號：</label>
+    <div class="col-3">
+      <input class="form-control" [(ngModel)]="qmodel.ApplyNumber" type="text" placeholder="請輸入請購單號">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-2 col-form-label">請購單日期：</label>
+    <div class="col-5">
+      <div class="input-group" *ngIf="!oo">
+        <input class="form-control"
+               bsDaterangepicker
+               [(bsValue)]="qmodel.ApplyDateRange" placeholder="修改購單日期區間"
+               [bsConfig]="{ rangeInputFormat: 'YYYY-MM-DD' }">
+        <!--  <button mat-icon-button color="primary" (click)="ApplyDateS.toggle()">
+    <mat-icon aria-hidden="false">calendar_today</mat-icon>
+  </button>-->
+        <!--value="{{ (qmodel.ApplyDateRange[0] | date:'yyyy-MM-dd') +' - ' +  (qmodel.ApplyDateRange[1] | date:'yyyy-MM-dd') }}"-->
+
+
+      </div>
+    </div>
+    <label class="col-2 col-form-label">&nbsp;&nbsp;&nbsp;&nbsp;供應商：</label>
+    <div class="col-3">
+      <select class="form-control" id="txt-stn-vname" name="loadline-bmain" [(ngModel)]="qmodel.vx" style="width:220px;">
+        <option value="">請選擇</option>
+        <option *ngFor="let v of (sconf.vandors$|async)" [ngValue]="v">{{v.Name}}</option>
+      </select>
+    </div>
+
+  </div>
+  <div class="form-group row">
+    <label class="col-2 col-form-label">進貨日期：</label>
+    <div class="col-5 ff">
+      <div class="input-group">
+        <input id="datepicker-purchase_date_s" type="text" class="form-control" placeholder="yyyy/mm/dd"
+               bsDatepicker
+               [(bsValue)]="qmodel.PurchaseDateS"
+               [maxDate]="qmodel.PurchaseDateE">
+        ~
+        <input id="datepicker-purchase_date_e" type="text" class="form-control" placeholder="yyyy/mm/dd"
+               bsDatepicker
+               [(bsValue)]="qmodel.PurchaseDateE"
+               [minDate]="qmodel.PurchaseDateS">
+      </div>
+    </div>
+    <label class="col-2 col-form-label" id="select-lab-main">&nbsp;&nbsp;&nbsp;&nbsp;設備：</label>
+    <div class="col-3">
+      <select class="form-control" id="txt-stn-ename" name="loadline-bmain" style="width:220px;" [(ngModel)]="qmodel.vy"   (ngModelChange)="sconf.revtag($event,qmodel)" >
+        <option value="">全部</option>
+        <option *ngFor="let v of  ( qmodel.vx?.Items ?  qmodel.vx?.Items : sconf.product$|async  )" [ngValue]="v" >{{v.Name}}</option>
+      </select>
+    </div>
+
+  </div>
+
+  <div class="text-warning bigger-110 text-center d-none" id="div-err-msg">
+    <i class="ace-icon fa fa-exclamation-triangle"></i>
+    <span> 錯誤訊息... </span>
+  </div>
+  <div class="text-right m-top-md">
+    <button type="button" class="btn btn-info btn-rounded" (click)="tl.prequery(qmodel)">查詢</button>
+    <button type="button" class="btn btn-warning btn-rounded" (click)="Clear(); search();">清除</button>
+    <button type="button" class="btn btn-info btn-rounded" (click)="ff(qmodel)">ff</button>
+
+
+  </div>
+  <!--<button (click)="ck()">ck</button>
+  <button (click)="edit(null)">edit</button>
+  <button (click)="req()">req</button>-->
+
+  <br />
+
+  <div class="content-wrapper">
+    <table class="table" matSort (matSortChange)="sortData($event)" >
+      <thead>
+        <!--class="thead-dark"-->
+        <tr>
+          <th scope="col">
+            <app-sortprop propname="3" displayname="廠商名稱"></app-sortprop>
+          </th>
+          <th scope="col">
+            <app-sortprop propname="5" displayname="設備名稱"></app-sortprop>
+          </th>
+          <th scope="col">
+            <app-sortprop propname="7" displayname="零件名稱"></app-sortprop>
+          </th>
+          <th scope="col">
+            <app-sortprop propname="8" displayname="起始時間"></app-sortprop>
+          </th>
+          <th scope="col">
+            <app-sortprop propname="9" displayname="成本"></app-sortprop>
+          </th>
+          <th scope="col">
+            Action
+          </th>
+        </tr>
+      </thead>
+      <!--<thead>
+        <tr>
+
+          <th mat-sort-header="3">廠商名稱 </th>
+          <th mat-sort-header="5">設備名稱</th>
+          <th mat-sort-header="7">零件名稱</th>
+          <th mat-sort-header="8">起始時間</th>
+          <th mat-sort-header="9">成本</th>
+          <th scope="col">
+            Action
+          </th>
+        </tr>
+      </thead>-->
+      <tbody>
+        <tr *ngFor="let e of tl.pagerObj.Results$|async">
+          <th scope="row">{{e.vendor_name}}</th>
+          <td scope="row">{{e.equipmeat_fix_type_name}}</td>
+          <td scope="row">{{e.equip_type_component_name}}</td>
+          <td scope="row">{{e.enabled_at|date:'yyyy-MM-dd'}}</td>
+          <td scope="row">{{e.cost_price}}</td>
+          <td scope="row">
+            <button>edit</button>
+            <button>delete</button>
+          </td>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="row" *ngIf="tl.pagerObj?.RowCount>0">
+    <div class="col-sm-8">
+      <pagination [totalItems]="tl.pagerObj.RowCount" [itemsPerPage]="tl.pagerObj.PageSize" [(ngModel)]="tl.pagerObj.CurrentPage"
+                  (pageChanged)="tl.chpage($event.page)"
+                  [maxSize]="tl.pagermaxSize"
+                  [rotate]="false"></pagination>
+    </div>
+    <div class="col-sm-2">
+      <span>total : {{tl.pagerObj.RowCount}} | </span>
+      <span>{{tl.pagerObj.CurrentPage}}/{{tl.pagerObj.PageCount}} pages</span>
+    </div>
+    <div class="col-sm-2">
+      每頁
+      <select (change)="tl.chpagesize(tl.pagerObj.PageSize)" [(ngModel)]="tl.pagerObj.PageSize">
+        <option [ngValue]="2">2</option>
+        <option [ngValue]="3">3</option>
+        <option [ngValue]="4">4</option>
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+      </select>筆
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,138 @@
+<div class="animated fadeIn">
+ 
+  <div class="row">
+
+
+
+    <div class="col-md-12">
+      <div class="card">
+
+        <div class="card-body">
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">保管人：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="qmodel.Keeper" type="text" placeholder="請輸入預設保管人名稱" [ngModelOptions]="{standalone: true}" >
+
+            </div>
+          </div>
+          <!--<div class="form-group row">
+    <label class="col-md-3 col-form-label" for="text-input">狀態：</label>
+    <div class="col-md-9">
+      <mat-radio-group aria-label="Select an status" [(ngModel)]="qmodel.Status">
+        <mat-radio-button [value]="null">全部</mat-radio-button>
+        <mat-radio-button [value]="true">啟用</mat-radio-button>
+        <mat-radio-button [value]="false">停用</mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-md-3 col-form-label" for="text-input">含稅：</label>
+    <div class="col-md-9">
+      <mat-radio-group aria-label="Select an status" [(ngModel)]="qmodel.TaxStatus">
+        <mat-radio-button [value]="null">全部</mat-radio-button>
+        <mat-radio-button [value]="true">含稅</mat-radio-button>
+        <mat-radio-button [value]="false">不含稅</mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </div>-->
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+   
+
+
+  <div class="card">
+    <div class="card-header" style="text-align:right">
+      <button type="button" class="btn btn-sm btn-primary" (click)="tl.prequery(qmodel)"><i class="fa fa-dot-circle-o"></i> Query</button>
+      <button type="reset" class="btn btn-sm btn-danger" (click)="Clear(); search();"><i class="fa fa-ban"></i> Reset</button>
+    </div>
+    <div class="card-body" *ngIf="tl.pagerObj.Results$|async">
+      <div class="content-wrapper">
+        <table class="table" matSort (matSortChange)="sortData($event)">
+          <thead>
+            <!--class="thead-dark"-->
+            <tr>
+              <th scope="col">
+                <app-sortprop propname="Name" displayname="倉別名稱"></app-sortprop>
+              </th>
+              <th scope="col">
+                <app-sortprop propname="TaxStatus" displayname="保管人"></app-sortprop>
+              </th>
+              
+              <th scope="col" style="text-align:right;">
+                操作
+              </th>
+            </tr>
+          </thead>
+          <!--<thead>
+            <tr>
+
+              <th mat-sort-header="3">廠商名稱 </th>
+              <th mat-sort-header="5">設備名稱</th>
+              <th mat-sort-header="7">零件名稱</th>
+              <th mat-sort-header="8">起始時間</th>
+              <th mat-sort-header="9">成本</th>
+              <th scope="col">
+                Action
+              </th>
+            </tr>
+          </thead>-->
+          <tbody>
+            <tr *ngFor="let e of tl.pagerObj.Results$|async">
+              <th scope="row">{{e.Name}}</th>
+              
+              <td scope="row">
+                 {{e.Keeper}}
+              </td>
+              <td scope="row" style="text-align:right;">
+                <button type="button" class="btn btn-sm btn-info" (click)="action(2,e)"><i class="fa fa-edit"></i> edit</button>
+                <!--<button type="button" class="btn btn-sm btn-info" (click)="action(2,qmodel)"><i class="fa fa-edit"></i> sort</button>-->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row" *ngIf="tl.pagerObj?.RowCount>0">
+        <div class="col-md-6">
+          <pagination [totalItems]="tl.pagerObj.RowCount" [itemsPerPage]="tl.pagerObj.PageSize" [(ngModel)]="tl.pagerObj.CurrentPage"
+                      (pageChanged)="tl.chpage($event.page)"
+                      [maxSize]="tl.pagermaxSize"
+                      [rotate]="false"></pagination>
+        </div>
+        <div class="col-md-3" style="text-align:center">
+          <span>total : {{tl.pagerObj.RowCount}} | </span>
+          <span>{{tl.pagerObj.CurrentPage}}/{{tl.pagerObj.PageCount}} pages</span>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-6" style="text-align:right">每頁</div>
+            <div class="col-md-4">
+              <select (change)="tl.chpagesize(tl.pagerObj.PageSize)" [(ngModel)]="tl.pagerObj.PageSize" class="form-control form-control-sm">
+                <option [ngValue]="2">2</option>
+                <option [ngValue]="3">3</option>
+                <option [ngValue]="4">4</option>
+                <option [ngValue]="5">5</option>
+                <option [ngValue]="10">10</option>
+              </select>
+            </div>
+            <div class="col-md-2" style="text-align:left">筆</div>
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <br />
+
+
+</div>

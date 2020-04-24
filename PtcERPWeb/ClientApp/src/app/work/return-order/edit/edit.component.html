@@ -1,0 +1,224 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">退貨單號：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.ApplyNumber" type="text" placeholder="請輸退貨單號" [ngModelOptions]="{standalone: true}" required>
+            </div>
+          </div> 
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">客戶：</label>
+            <div class="col-md-9">
+              <select class="form-control" id="txt-stn-vname" name="loadline-bmain" [(ngModel)]="refobj.CustomerId"
+                      [ngModelOptions]="{standalone: true}"
+                      [disabled]="true">
+                <option [ngValue]="0">請選擇</option>
+                <option *ngFor="let v of (sconf.xcustomers$|async)" [ngValue]="v.Id">{{v.Name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">聯絡人：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Customer.Connecter" type="text" placeholder="請輸入保管人" [ngModelOptions]="{standalone: true}" required>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">月結方式：</label>
+            <div class="col-md-9">
+              <select class="form-control" id="txt-stn-vname" name="loadline-bmain" [(ngModel)]="refobj.Customer.PayMethod" [ngModelOptions]="{standalone: true}">
+                <option [ngValue]="null">請選擇</option>
+                <option [ngValue]="1">月結</option>
+                <option [ngValue]="2">現結</option>
+
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">Remark：</label>
+            <div class="col-md-9">
+              <textarea class="form-control" [(ngModel)]="refobj.Remark" type="text" placeholder="請輸入Remark" [ngModelOptions]="{standalone: true}" required></textarea>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card" *ngIf="refobj.Customer.Connecter && refobj.ApplyNumber">
+
+        <div class="card-body">
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">統編：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Customer.TaxId" type="text" placeholder="請輸入統編" [ngModelOptions]="{standalone: true}" required>
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">地址：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Customer.Address" type="text" placeholder="請輸入地址" [ngModelOptions]="{standalone: true}" required>
+
+            </div>
+          </div>
+
+
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">電話：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Customer.Phone" type="text" placeholder="請輸入電話" [ngModelOptions]="{standalone: true}" required>
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">退售日期</label>
+            <div class="col-md-9">
+              <div class="input-group">
+                <input   type="text" class="form-control" placeholder="yyyy/mm/dd"
+                       bsDatepicker
+                       [(bsValue)]="refobj.ReturnDate"
+                       value="{{ refobj.ReturnDate | date: 'yyyy/MM/dd' }}"
+                       [bsConfig]="{ dateInputFormat: 'YYYY/MM/DD' }">
+
+              </div>
+            </div>
+
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">預設理由：</label>
+            <div class="col-md-9">
+              <textarea class="form-control" [(ngModel)]="refobj.MainResson" type="text" placeholder="請輸入預設理由" [ngModelOptions]="{standalone: true}" required></textarea>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" style="text-align:right">
+      <button type="button" class="btn btn-sm btn-warning" (click)="tl.onSelectTab(null,0)">
+        返回查詢
+      </button>
+
+      <button type="button" class="btn btn-sm btn-primary" (click)="doMod()"><i class="fa fa-save"></i> 修改</button>
+
+      <span *ngIf="preView && !env.luckedit">
+        <span style="min-width:130px;display:inline-block">
+          <span> {{env.doProcess  ? '執行':'稍後執行'}}</span>
+          <label class="switch switch-label switch-pill switch-warning" style="margin-bottom:-10px;">
+            <input checked="" class="switch-input" type="checkbox" [(ngModel)]="env.doProcess">
+            <span class="switch-slider" data-checked="✓" data-unchecked="✕"></span>
+          </label>
+        </span>
+
+        <button type="button" class="btn btn-sm btn-primary" (click)="doMod()"><i class="fa fa-save"></i> 修改</button>
+
+      </span>
+
+    </div>
+
+    <div class="card-body" *ngIf="!env.preViewAll && cudReturn.pagerObj.Results$|async">
+      <div class="content-wrapper">
+        <!--退貨總金額-->
+        <h1>   {{cudReturn.pagerObj.ExtMsg.AllOrgPrice}}</h1>
+        <h1>   {{cudReturn.pagerObj.ExtMsg.AllSalePrice}}</h1>
+        <h1>   {{cudReturn.pagerObj.ExtMsg.AllReturnPrice}}</h1>
+        <h1>   {{cudReturn.pagerObj.ExtMsg.AllCount}}</h1>
+
+
+ 
+        <table class="table">
+          <thead>
+            <!--class="thead-dark"-->
+            <tr *ngIf="!env.ViewFormate">
+              <th><app-sortprop propname="BarcodeValue" displayname="條碼" [prs]="cudReturn"></app-sortprop></th>
+              <th><app-sortprop propname="PApplyNumber" displayname="採購單號" [prs]="cudReturn"></app-sortprop></th>
+              <th><app-sortprop propname="PurchaseDate" displayname="採購日" [prs]="cudReturn"></app-sortprop></th>
+              <th><app-sortprop propname="OrgPrice" displayname="採購價" [prs]="cudReturn"></app-sortprop></th>
+              <th><app-sortprop propname="SApplyNumber" displayname="銷售單號" [prs]="cudReturn"></app-sortprop></th>
+              <th><app-sortprop propname="SaleDate" displayname="銷售日" [prs]="cudReturn"></app-sortprop></th>
+              <th><app-sortprop propname="SalePrice" displayname="銷售價" [prs]="cudReturn"></app-sortprop></th>
+
+              <th>
+                <app-sortprop propname="Reason" displayname="Reason" [prs]="cudReturn"></app-sortprop>
+              </th>
+              <th>
+                <app-sortprop propname="ReturnPrice" displayname="ReturnPrice" [prs]="cudReturn"></app-sortprop>
+                <button class="btn btn-primary" (click)="env.ViewFormate=!env.ViewFormate">品項內容 </button>
+              </th>
+            </tr>
+            <tr *ngIf="env.ViewFormate">
+              <th><app-sortprop propname="BarcodeValue" displayname="條碼" [prs]="cudReturn"></app-sortprop></th>
+              <th><app-sortprop propname="VandorName" displayname="廠商" [prs]="cudReturn"></app-sortprop></th>
+              <th><app-sortprop propname="DeviceName" displayname="設備" [prs]="cudReturn"></app-sortprop></th>
+              <th><app-sortprop propname="FormateName" displayname="規格" [prs]="cudReturn"></app-sortprop></th>
+              <th><app-sortprop propname="WithBarcodes" displayname="條碼控管" [prs]="cudReturn"></app-sortprop></th>
+              <th><app-sortprop propname="StockUnitName" displayname="出貨倉" [prs]="cudReturn"></app-sortprop></th>
+              <th><app-sortprop propname="ReturnCount" displayname="退貨次數" [prs]="cudReturn">     </app-sortprop></th>
+
+              <th>
+                <app-sortprop propname="Reason" displayname="Reason" [prs]="cudReturn"></app-sortprop>
+              </th>
+              <th>
+                <app-sortprop propname="ReturnPrice" displayname="ReturnPrice" [prs]="cudReturn"></app-sortprop>
+                <button class="btn btn-primary" (click)="env.ViewFormate=!env.ViewFormate">採售內容 </button>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e of locRs$|async">
+              <th>{{e.BarcodeValue}}</th>
+              <td>{{  !env.ViewFormate ? e.PApplyNumber : e.VandorName    }}</td>
+              <th>{{  !env.ViewFormate ? (e.PurchaseDate|date:'yyyy/MM/dd') : e.DeviceName  }}</th>
+              <th>{{  !env.ViewFormate ? e.OrgPrice : e.FormateName  }}</th>
+              <th>{{  !env.ViewFormate ? e.SApplyNumber :  e.WithBarcodes ? "Y" : "N"    }}</th>
+              <th>{{  !env.ViewFormate ? (e.SaleDate|date:'yyyy/MM/dd') :e.StockUnitName}}</th>
+              <th>{{  !env.ViewFormate ? e.SalePrice : e.ReturnCount  }}</th>
+
+              <td>{{e.ReturnReason}}</td>
+              <td>{{e.ReturnPrice}}</td>
+
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row" *ngIf="cudReturn.pagerObj?.RowCount>0">
+        <div class="col-md-6">
+          <pagination [totalItems]="cudReturn.pagerObj.RowCount" [itemsPerPage]="cudReturn.pagerObj.PageSize" [(ngModel)]="cudReturn.pagerObj.CurrentPage"
+                      (pageChanged)="cudReturn.chPage($event.page)"
+                      [maxSize]="cudReturn.pagermaxSize"
+                      [rotate]="false"></pagination>
+        </div>
+        <div class="col-md-3" style="text-align:center">
+          <span>total : {{cudReturn.pagerObj.RowCount}} | </span>
+          <span>{{cudReturn.pagerObj.CurrentPage}}/{{cudReturn.pagerObj.PageCount}} pages</span>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-6" style="text-align:right">每頁</div>
+            <div class="col-md-4">
+              <select (change)="cudReturn.chPageSize(cudReturn.pagerObj.PageSize)" [(ngModel)]="cudReturn.pagerObj.PageSize" class="form-control form-control-sm">
+                <option [ngValue]="2">2</option>
+                <option [ngValue]="3">3</option>
+                <option [ngValue]="4">4</option>
+                <option [ngValue]="5">5</option>
+                <option [ngValue]="10">10</option>
+              </select>
+            </div>
+            <div class="col-md-2" style="text-align:left">筆</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

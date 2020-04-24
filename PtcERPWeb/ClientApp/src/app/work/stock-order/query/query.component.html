@@ -1,0 +1,176 @@
+<div class="animated fadeIn">
+
+  <div class="row">
+
+
+
+    <div class="col-md-12">
+      <div class="card">
+
+        <div class="card-body">
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label">保管人：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="qmodel.Keeper" type="text" placeholder="請輸入預設保管人名稱" [ngModelOptions]="{standalone: true}">
+
+            </div>
+          </div>
+          <!--<div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">狀態：</label>
+            <div class="col-md-9">
+              <mat-radio-group aria-label="Select an status" [(ngModel)]="qmodel.Status">
+                <mat-radio-button [value]="null">全部</mat-radio-button>
+                <mat-radio-button [value]="true">啟用</mat-radio-button>
+                <mat-radio-button [value]="false">停用</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">含稅：</label>
+            <div class="col-md-9">
+              <mat-radio-group aria-label="Select an status" [(ngModel)]="qmodel.TaxStatus">
+                <mat-radio-button [value]="null">全部</mat-radio-button>
+                <mat-radio-button [value]="true">含稅</mat-radio-button>
+                <mat-radio-button [value]="false">不含稅</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>-->
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+  <div class="card">
+    <div class="card-header" style="text-align:right">
+      <button type="button" class="btn btn-sm btn-primary" (click)="cud.preQuery(qmodel)"><i class="fa fa-dot-circle-o"></i> Query</button>
+      <button type="reset" class="btn btn-sm btn-danger" (click)="Clear(); search();"><i class="fa fa-ban"></i> Reset</button>
+    </div>
+    <div class="card-body" *ngIf="cud.pagerObj.Results$|async">
+      <div class="content-wrapper">
+        <table class="table" matSort (matSortChange)="sortData($event)">
+          <thead>
+            <!--class="thead-dark"-->
+            <tr>
+              <th scope="col">
+                <app-sortprop propname="ApplyNumber" displayname="單號"></app-sortprop>
+              </th>
+              <th scope="col">
+                <app-sortprop propname="Keeper" displayname="保管人"></app-sortprop>
+              </th>
+              <th scope="col"> <app-sortprop propname="OrgStockUnitName" displayname="來源倉"></app-sortprop>  </th>
+              <th scope="col"> <app-sortprop propname="StockUnitName" displayname="目的倉"></app-sortprop>  </th>
+              <th scope="col"> <app-sortprop propname="CreateDate" displayname="創立日"></app-sortprop>  </th>
+              <th scope="col"> <app-sortprop propname="TotalBarcodes" displayname="總量"></app-sortprop>  </th>
+              <th scope="col" style="text-align:right;">
+                操作
+              </th>
+            </tr>
+          </thead>
+          <!--<thead>
+            <tr>
+
+              <th mat-sort-header="3">廠商名稱 </th>
+              <th mat-sort-header="5">設備名稱</th>
+              <th mat-sort-header="7">零件名稱</th>
+              <th mat-sort-header="8">起始時間</th>
+              <th mat-sort-header="9">成本</th>
+              <th scope="col">
+                Action
+              </th>
+            </tr>
+          </thead>-->
+          <tbody>
+            <tr *ngFor="let e of cud.pagerObj.Results$|async">
+              <th scope="row">{{e.ApplyNumber}}</th>
+              <td scope="row">{{e.Keeper}}</td>
+              <th scope="row">{{e.OrgStockUnitName}}</th>
+              <th scope="row">{{e.StockUnitName}}</th>
+              <th scope="row">{{e.CreateDate|date:'yyyy/MM/dd'}}</th>
+              <th scope="row">{{e.TotalBarcodes}}</th>
+
+              <td scope="row" style="text-align:right;">
+                <button type="button" class="btn btn-sm btn-danger" (click)="delId=e.StockOrderId ;delApplyNumber=e.ApplyNumber ;modal.show()" *ngIf="!e.ProcessDate">
+                  <i class="fa fa-trash-o"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-warning" (click)="execProcess(e)" *ngIf="!e.ProcessDate">
+                  <i class="fa fa-dot-circle-o"></i>
+                  Exec
+                </button>
+
+
+                <button type="button" class="btn btn-sm btn-info" (click)="action(2,e)">
+                  <i class="fa" [ngClass]="{'fa-edit':!e.ProcessDate,'fa-eye' :e.ProcessDate}"></i>
+                  {{  e.ProcessDate ? 'view':'edit'       }}
+                </button>
+                <!--<button type="button" class="btn btn-sm btn-info" (click)="action(2,qmodel)"><i class="fa fa-edit"></i> sort</button>-->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row" *ngIf="cud.pagerObj?.RowCount>0">
+        <div class="col-md-6">
+          <pagination [totalItems]="cud.pagerObj.RowCount" [itemsPerPage]="cud.pagerObj.PageSize" [(ngModel)]="cud.pagerObj.CurrentPage"
+                      (pageChanged)="cud.chPage($event.page)"
+                      [maxSize]="cud.pagermaxSize"
+                      [rotate]="false"></pagination>
+        </div>
+        <div class="col-md-3" style="text-align:center">
+          <span>total : {{cud.pagerObj.RowCount}} | </span>
+          <span>{{cud.pagerObj.CurrentPage}}/{{cud.pagerObj.PageCount}} pages</span>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-6" style="text-align:right">每頁</div>
+            <div class="col-md-4">
+              <select (change)="cud.chPageSize(cud.pagerObj.PageSize)" [(ngModel)]="cud.pagerObj.PageSize" class="form-control form-control-sm">
+                <option [ngValue]="2">2</option>
+                <option [ngValue]="3">3</option>
+                <option [ngValue]="4">4</option>
+                <option [ngValue]="5">5</option>
+                <option [ngValue]="10">10</option>
+              </select>
+            </div>
+            <div class="col-md-2" style="text-align:left">筆</div>
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <br />
+  <div class="modal fade" bsModal #modal="bs-modal"
+       tabindex="-1" role="dialog" aria-labelledby="dialog-events-name"
+       (onHidden)="handler('onHidden', $event)">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 id="dialog-events-name" class="modal-title pull-left">SotckOrder ApplyNumber:{{delApplyNumber}}</h4>
+          <button type="button" class="close pull-right" aria-label="Close" (click)="modal.hide()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">  
+          確認刪除 <br>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-warning" (click)="modal.hide()">取消</button>
+          <button class="btn btn-danger"  (click)="del(delId) ;modal.hide();"  > 確定</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

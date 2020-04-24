@@ -1,0 +1,81 @@
+<div class="animated fadeIn">
+
+  <div class="row">
+
+    <div class="col-md-6">
+
+      <div class="card">
+        <div class="card-body">
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">客戶名稱：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Name" type="text" placeholder="請輸入客戶名稱" [ngModelOptions]="{standalone: true}" required>
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">地址：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Address" type="text" placeholder="請輸入地址" [ngModelOptions]="{standalone: true}" required>
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">聯絡人：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Connecter" type="text" placeholder="請輸入聯絡人名稱" [ngModelOptions]="{standalone: true}" required>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">月結方式：</label>
+            <div class="col-md-9">
+              <select class="form-control" id="txt-stn-vname" name="loadline-bmain" [(ngModel)]="refobj.PayMethod" [ngModelOptions]="{standalone: true}">
+                <option [ngValue]="null">請選擇</option>
+                <option [ngValue]="1">月結</option>
+                <option [ngValue]="2">現結</option>
+
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">電話：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.Phone" type="text" placeholder="請輸入電話" [ngModelOptions]="{standalone: true}" required>
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="text-input">統編：</label>
+            <div class="col-md-9">
+              <input class="form-control" [(ngModel)]="refobj.TaxId" type="text" placeholder="請輸入統編" [ngModelOptions]="{standalone: true}" required>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-footer">
+          <button type="button" class="btn btn-sm btn-primary" (click)="tl.mod(refobj,refobj.CustomerInfoId)" [disabled]="!refobj.Name "><i class="fa fa-dot-circle-o"></i> 確認</button>
+          <button type="reset" class="btn btn-sm btn-danger" (click)="tl.onSelectTab(null,0)"><i class="fa fa-ban"></i>取消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
